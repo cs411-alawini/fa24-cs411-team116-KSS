@@ -1,1 +1,1 @@
-# fa24-cs411-team116-KSS
+# team116-KSS
