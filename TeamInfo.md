@@ -9,6 +9,8 @@ Basic Information:
 | Member1  | ssamp2@illinois.edu  |
 | Member2  | Kavya Moharana |
 | Member2  | kavyam3@illinois.edu  |
+| Member3  | James Mallek |
+| Member3  | jmallek2@illinois.edu  |
 
 Project Information:
 | Info | Description |
