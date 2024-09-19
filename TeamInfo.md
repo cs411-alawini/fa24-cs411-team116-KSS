@@ -2,7 +2,7 @@ Basic Information:
 | Info  | Description |
 | ------------- | ------------- |
 | TeamID  | Team-116  |
-| TeamName  | KSS  |
+| TeamName  | KSSJ  |
 | Captain  | Sruthi Kode  |
 | Captain  | kode2@illinois.edu  |
 | Member1  | Samidha Sampat  |
