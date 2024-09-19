@@ -15,7 +15,7 @@ Basic Information:
 Project Information:
 | Info | Description |
 | ------------- | ------------- |
-| Title  | Class of the Day  |
+| Title  | UIUC Class of the Day  |
 | System URL  | link_to_system  |
 | Video Link  | link_to_video  |
 
