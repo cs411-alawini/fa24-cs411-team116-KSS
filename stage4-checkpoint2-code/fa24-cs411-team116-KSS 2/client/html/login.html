@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <script>
+        async function submitForm() {
+            // Get user inputs
+            const userId = document.getElementById('userid').value;
+            const password = document.getElementById('password').value;
+
+            // Construct the URL with query parameters
+            const url = `http://127.0.0.1:5000/login?username=${encodeURIComponent(userId)}&password=${encodeURIComponent(password)}`;
+            
+            try {
+                // Send a GET request to the URL
+                const response = await fetch(url);
+
+                // Check if the response is OK
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status} ${response.statusText}`);
+                }
+
+                // Parse and display the response (assuming it's JSON)
+                const data = await response.text(); // Use `.json()` if the response is JSON
+                document.getElementById('output').textContent = `Response: ${data}`;
+                document.cookie = `username=${encodeURIComponent(userId)}; path=/; max-age=3600`;
+                window.location.href = "/";
+            } catch (error) {
+                // Handle errors
+                document.getElementById('output').textContent = `Error: ${error.message}`;
+            }
+        }
+
+        async function submitForm2() {
+            // Get user inputs
+            const userId = document.getElementById('userid2').value;
+            const password = document.getElementById('password2').value;
+            const email = document.getElementById('email').value;
+
+            // Construct the URL with query parameters
+            const url = `http://127.0.0.1:5000/signup?username=${encodeURIComponent(userId)}&password=${encodeURIComponent(password)}&email=${encodeURIComponent(email)}`;
+            
+            try {
+                // Send a GET request to the URL
+                const response = await fetch(url);
+
+                // Check if the response is OK
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status} ${response.statusText}`);
+                }
+
+                // Parse and display the response (assuming it's JSON)
+                const data = await response.text(); // Use `.json()` if the response is JSON
+                document.getElementById('output').textContent = `Response: ${data}`;
+                document.cookie = `username=${encodeURIComponent(userId)}; path=/; max-age=3600`;
+                window.location.href = "/";
+            } catch (error) {
+                // Handle errors
+                document.getElementById('output').textContent = `Error: ${error.message}`;
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Login</h1>
+    <form onsubmit="event.preventDefault(); submitForm();">
+        <label for="userid">User ID:</label>
+        <input type="text" id="userid" name="userid" required><br><br>
+        
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br><br>
+        
+        <button type="submit">Submit</button>
+    </form>
+    <div id="output" style="margin-top: 20px; font-weight: bold;"></div>
+    <h1>Signup</h1>
+    <form onsubmit="event.preventDefault(); submitForm2();">
+        <label for="userid2">User ID:</label>
+        <input type="text" id="userid2" name="userid2" required><br><br>
+
+        <label for="email">Email:</label>
+        <input type="text" id="email" name="email" required><br><br>
+        
+        <label for="password2">Password:</label>
+        <input type="password" id="password2" name="password2" required><br><br>
+        
+        <button type="submit">Submit</button>
+    </form>
+    <div id="output" style="margin-top: 20px; font-weight: bold;"></div>
+</body>
+</html>

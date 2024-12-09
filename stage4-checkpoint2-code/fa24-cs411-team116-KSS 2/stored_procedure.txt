@@ -1,0 +1,22 @@
+DELIMITER //
+CREATE PROCEDURE MakeGuess(
+	IN uid VARCHAR(63),
+	IN dept VARCHAR(31),
+	IN num INT,
+	IN today DATE
+)
+BEGIN
+	DECLARE crn INT;
+	DECLARE gid INT;
+	SELECT MAX(GuessId)
+	INTO gid
+	FROM Guess;
+	SELECT CourseId 
+	INTO crn
+	FROM Courses JOIN Departments ON Courses.DepartmentId = Departments.DepartmentId WHERE Departments.DepartmentId = dept AND Courses.Number = num;
+	INSERT INTO Guess Values (1 + gid, uid, today, crn);
+	SELECT Courses.DepartmentId, Number, Courses.Name, Credits, GenEd FROM Courses WHERE CourseId = crn
+	UNION ALL
+	SELECT DepartmentId, Number, Name, Credits, GenEd FROM Courses WHERE CourseId = (SELECT CorrectCourseId FROM DailyClass WHERE CurrentDate = today);
+END //
+DELIMITER ;

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Info</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .user-info {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+    }
+    .error {
+      color: red;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Welcome!</h1>
+  <a href="/">back to home</a>
+  <p>Fetching your information...</p>
+  <div id="output" class="user-info"></div>
+  <div id="error" class="error"></div>
+
+  <script>
+    // Function to get the value of a specific cookie by name
+    function getCookie(name) {
+      const cookies = document.cookie.split(';');
+      for (let cookie of cookies) {
+        const [key, value] = cookie.trim().split('=');
+        if (key === name) {
+          return value;
+        }
+      }
+      return null;
+    }
+
+    async function fetchUserInfo() {
+      const username = getCookie('username');
+      if (!username) {
+        document.getElementById('error').textContent = 'Error: No username cookie found.';
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://127.0.0.1:5000/info?username=${username}`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch: ${response.statusText}`);
+        }
+        const data = await response.json();
+        displayUserInfo(data);
+      } catch (error) {
+        document.getElementById('error').textContent = `Error: ${error.message}`;
+      }
+    }
+
+    function displayUserInfo(data) {
+      const outputDiv = document.getElementById('output');
+      outputDiv.innerHTML = `
+        <p><strong>User ID:</strong> ${data.UserId}</p>
+        <p><strong>Email:</strong> ${data.Email}</p>
+        <p><strong>Date Joined:</strong> ${data.DateJoined.split(' 00:00')[0]}</p>
+        <p><strong>Most Guessed Course:</strong> ${data.MostGuessed}</p>
+      `;
+    }
+
+    async function submitForm() {
+            // Get user inputs
+            const userId = getCookie("username")
+            const password = document.getElementById('password').value;
+
+            // Construct the URL with query parameters
+            const url = `http://127.0.0.1:5000/delete?username=${encodeURIComponent(userId)}&password=${encodeURIComponent(password)}`;
+            
+            try {
+                // Send a GET request to the URL
+                const response = await fetch(url);
+
+                // Check if the response is OK
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status} ${response.statusText}`);
+                }
+
+                // Parse and display the response (assuming it's JSON)
+                const data = await response.text(); // Use `.json()` if the response is JSON
+                document.getElementById('output').textContent = `Response: ${data}`;
+                document.cookie = `username=${encodeURIComponent(userId)}; path=/; max-age=0`;
+                window.location.href = "/login";
+            } catch (error) {
+                // Handle errors
+                document.getElementById('output').textContent = `Error: ${error.message}`;
+            }
+        }
+
+        async function modifyEmail() {
+            // Get user inputs
+            const userId = getCookie("username")
+            const email = document.getElementById('email').value;
+
+            // Construct the URL with query parameters
+            const url = `http://127.0.0.1:5000/modify/email?username=${encodeURIComponent(userId)}&email=${encodeURIComponent(email)}`;
+            
+            try {
+                // Send a GET request to the URL
+                const response = await fetch(url);
+
+                // Check if the response is OK
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status} ${response.statusText}`);
+                }
+
+                // Parse and display the response (assuming it's JSON)
+                const data = await response.text(); // Use `.json()` if the response is JSON
+                document.getElementById('output').textContent = `Response: ${data}`;
+                window.location.href = "/info";
+            } catch (error) {
+                // Handle errors
+                document.getElementById('output').textContent = `Error: ${error.message}`;
+            }
+        }
+
+    // Fetch and display user information on page load
+    fetchUserInfo();
+  </script>
+  <h1>Change email</h1>
+  <form onsubmit="event.preventDefault(); modifyEmail();">
+      
+      <label for="email">Enter new email:</label>
+      <input type="text" id="email" name="email" required><br><br>
+      
+      <button type="submit">Submit</button>
+  </form>
+  <h1>Delete account</h1>
+  <form onsubmit="event.preventDefault(); submitForm();">
+      
+      <label for="password">Input your password and submit to confirm account deletion:</label>
+      <input type="password" id="password" name="password" required><br><br>
+      
+      <button type="submit">Submit</button>
+  </form>
+</body>
+</html>

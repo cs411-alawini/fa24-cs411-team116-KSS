@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class of the Day</title>
+    <script>
+        function getCookie(name) {
+      const cookies = document.cookie.split(';');
+      for (let cookie of cookies) {
+        const [key, value] = cookie.trim().split('=');
+        if (key === name) {
+          document.getElementById("welcome").innerText = "Welcome user: " + value;
+          return value;
+        }
+      }
+      return null;
+    }
+    function addGuess(guess, values, summary) {
+            // Get the container div
+            const container = document.getElementById("output");
+            
+            // Create a new input element
+            const p = document.createElement("p");
+            
+            
+            // Set its type and other attributes
+            const department = guess['department']
+            const number = guess['number']
+            const name = guess['name']
+            const credits = guess['credits']
+            var genEd = guess['genEd']
+            if (genEd.trim() == "") {
+              genEd = "No GenEd"
+            }
+
+            var departmentValue = values['department']
+            if (departmentValue == "=") {
+              departmentValue = "✅"
+            } else if (departmentValue == "<") {
+              departmentValue = "⬇️";
+            } else {
+              departmentValue = "⬆️";
+            }
+
+            var numberValue = values['number']
+            if (numberValue == "=") {
+              numberValue = "✅";
+            } else if (numberValue == "<") {
+              numberValue = "⬇️";
+            } else {
+              numberValue = "⬆️";
+            }
+
+            var nameValue = values['name']
+            if (nameValue) {
+              nameValue = "✅"
+            } else {
+              nameValue = "❌"
+            }
+            var creditsValue = values['credits']
+            if (creditsValue) {
+              creditsValue = "✅"
+            } else {
+              creditsValue = "❌"
+            }
+
+            var genEdValue = values['genEd']
+            if (genEdValue) {
+              genEdValue = "✅"
+            } else {
+              genEdValue = "❌"
+            }
+
+
+            const text = document.createTextNode(department + " " + departmentValue + " | " + number + " " + numberValue + " | " + name + " " + nameValue + " | " + credits + " " + creditsValue + " | " + genEd + " " + genEdValue)
+            p.appendChild(text)
+            // textBox.disabled = true;
+            
+            // Append the new input element to the container div
+            container.prepend(document.createElement("br"));
+            container.prepend(p);
+
+            
+            if (departmentValue == "✅" && numberValue == "✅")
+            {
+              const p_summary = document.createElement("p");
+              p_summary.textContent = summary;
+              container.prepend(p_summary);
+              const h_congrats = document.createElement("h3");
+              h_congrats.textContent = "Congratulations on guessing today's Class of the Day! Read more about this class below:";
+              container.prepend(h_congrats)
+              const guessing_form = document.getElementById("guessing_form");
+              guessing_form.remove();
+            }
+        }
+        async function submitForm() {
+            // Get user inputs
+            try {
+            const username = getCookie('username');
+            const department = document.getElementById('department').value;
+            const number = document.getElementById('number').value;
+
+            // Construct the URL with query parameters
+            const url = `http://127.0.0.1:5000/guess?username=${encodeURIComponent(username)}&department=${encodeURIComponent(department)}&number=${encodeURIComponent(number)}`;
+            
+            
+                // Send a GET request to the URL
+                const response = await fetch(url);
+
+                // Check if the response is OK
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status} ${response.statusText}`);
+                }
+
+                // Parse and display the response (assuming it's JSON)
+                const data = await response.json(); // Use `.json()` if the response is JSON
+                const guess = data['guess']
+                const values = data['values']
+                const summary = data['summary']
+                addGuess(guess, values, summary)
+                // document.getElementById('output').textContent = `Response: ${guess}`;
+            } catch (error) {
+                // Handle errors
+                document.getElementById('output').textContent = `Error: ${error.message}`;
+            }
+        }
+    </script>
+</head>
+<body onload="getCookie('username')">
+    <h1>Class of the Day</h1>
+    <p id="welcome">Hi</p>
+    <form onsubmit="event.preventDefault(); submitForm();" id="guessing_form">
+        <label for="department">Department abbreviation</label>
+        <input type="text" id="department" name="department" required><br><br>
+        
+        <label for="number">Course number</label>
+        <input type="text" id="number" name="number" required><br><br>
+        
+        <button type="submit">Submit</button>
+    </form>
+    <div id="output" style="margin-top: 20px; font-weight: bold;"></div>
+    <a href="/info">See my info</a>
+    <br>
+    <a href="/login">Login to a new account</a>
+</body>
+</html>

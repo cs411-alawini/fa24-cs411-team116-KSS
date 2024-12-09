@@ -1,0 +1,17 @@
+DELIMITER //
+CREATE TRIGGER FavoriteClassTrigger
+AFTER INSERT ON Guess
+FOR EACH ROW
+BEGIN
+DECLARE curr_most_guessed INT;
+DECLARE most_guessed_course INT;
+SELECT MostGuessed INTO curr_most_guessed FROM User WHERE UserId = NEW.UserId;
+SELECT CourseId INTO most_guessed_course FROM Guess WHERE UserId = NEW.UserId GROUP BY CourseId ORDER BY COUNT(CourseId) DESC LIMIT 1;
+IF curr_most_guessed IS NULL OR curr_most_guessed <> most_guessed_course THEN
+UPDATE User
+SET MostGuessed = most_guessed_course
+WHERE UserId = NEW.UserId;
+END IF;
+END;
+//
+DELIMITER ;
