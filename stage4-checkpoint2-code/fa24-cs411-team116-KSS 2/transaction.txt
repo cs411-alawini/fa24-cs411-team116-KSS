@@ -1,0 +1,16 @@
+START TRANSACTION;
+
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+
+UPDATE User u
+SET AvgGuesses = (
+    SELECT AVG(GuessCount)
+    FROM (
+        SELECT COUNT(*) as GuessCount
+        FROM Guess g
+        WHERE g.UserId = u.UserId
+        GROUP BY g.CurrentDate
+    ) AS DailyGuesses
+)
+
+COMMIT;
